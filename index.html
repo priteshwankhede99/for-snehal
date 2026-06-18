@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For The Wonderful Snehal</title>
-    <!-- Google Fonts for custom script typography -->
+    <!-- Google Fonts for custom typography -->
     <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
     <link href="https://googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -49,6 +49,7 @@
             font-weight: 400;
             animation: pulse 2s infinite alternate;
             z-index: 100;
+            user-select: none;
         }
 
         @keyframes pulse {
@@ -68,6 +69,7 @@
             z-index: 10;
         }
 
+        /* Shift card right on flip to keep the spread centered on screen */
         .book-container.open {
             transform: translateX(50%);
         }
@@ -84,7 +86,6 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.35);
             border-radius: 0 16px 16px 0;
             z-index: 5;
-            pointer-events: auto; /* FIXED: Ensures clicks hit the page engine */
         }
 
         .page-side {
@@ -100,13 +101,13 @@
             text-align: center;
         }
 
-        /* Front Cover setup with first picture */
+        /* Front Page Cover (1snehal-photo.jpg) */
         .front {
             z-index: 2;
             padding: 0 !important;
             overflow: hidden;
             border-radius: 0 16px 16px 0;
-            background: #fff5f8;
+            background: var(--card-bg);
         }
 
         .cover-photo {
@@ -114,16 +115,17 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            pointer-events: none; /* FIXED: Stops image from blocking page clicks */
+            pointer-events: none; /* Stops image from blocking clicks */
         }
 
-        /* Inside Left Backing page setup with second picture */
+        /* Inside Left Backing (snehal-photo.jpg) */
         .back {
             transform: rotateY(180deg);
             background: #fff0f5; 
             border-radius: 16px 0 0 16px;
             border-right: 1px solid rgba(0, 0, 0, 0.05);
             overflow: hidden;
+            padding: 0 !important;
         }
 
         .back-photo {
@@ -135,7 +137,7 @@
             pointer-events: none;
         }
 
-        /* Inside Right Message Panel Layout */
+        /* Inside Right Message Layout */
         .base-page {
             position: absolute;
             width: 100%;
@@ -153,6 +155,7 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.35);
             border-radius: 0 16px 16px 0;
             background-image: linear-gradient(to right, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0) 8%);
+            user-select: none;
         }
 
         /* Staggered Text Entrance Effects */
@@ -259,29 +262,45 @@
                 opacity: 0;
             }
         }
+
+        /* Mobile Optimization Scale */
+        @media (max-width: 500px) {
+            .book-container {
+                width: 320px;
+                height: 420px;
+            }
+            .book-container.open {
+                transform: translateX(0); /* Avoid throwing card off screen on small screens */
+            }
+            .name-title { font-size: 2.8rem; }
+            .signature-name { font-size: 2.2rem; }
+            .message-content { font-size: 0.85rem; max-width: 260px; }
+            .base-page { padding: 30px 20px; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Target div for falling cherry blossoms and hearts -->
+    <!-- Particle overlay for weather effects -->
     <div class="particle-container" id="particle-box"></div>
 
+    <!-- User Action Cue -->
     <div class="instruction" id="instruction-text">Tap the card to open</div>
 
     <div class="book-container" id="card">
-        <!-- Flipping Page Layout Structure -->
+        <!-- Turning Sheet Element -->
         <div class="page">
-            <!-- Closed Cover (Picture 1) -->
+            <!-- Front Face: Closed view containing image 1 -->
             <div class="page-side front">
-                <img src="1snehal-photo.jpg" alt="Opening Cover Photo" class="cover-photo">
+                <img src="1snehal-photo.jpg" alt="Snehal Cover" class="cover-photo">
             </div>
-            <!-- Opened Left Leaf Inner Panel (Picture 2) -->
+            <!-- Back Face: Opened interior left wing containing image 2 -->
             <div class="page-side back">
-                <img src="snehal-photo.jpg" alt="Inside Left Page Sketch" class="back-photo">
+                <img src="snehal-photo.jpg" alt="Snehal Sketch" class="back-photo">
             </div>
         </div>
 
-        <!-- Inside Right Panel (Message Layer) -->
+        <!-- Static Base Panel: Hidden right wing text layout -->
         <div class="base-page">
             <div class="fade-item delay-1">
                 <p class="sub-header">For the wonderful</p>
@@ -302,19 +321,3 @@
 
             <div class="signature-block fade-item delay-3">
                 <p class="closing">With Love,</p>
-                <h2 class="signature-name">Pritesh</h2>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const card = document.getElementById('card');
-            const instruction = document.getElementById('instruction-text');
-            const particleBox = document.getElementById('particle-box');
-
-            // Set up clicking logic toggles
-            if (card && instruction) {
-                card.addEventListener('click', () => {
-                    card.classList.toggle('open');
-                    if (card.classList.contains('open')) {
