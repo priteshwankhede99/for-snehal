@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For The Wonderful Snehal</title>
-    <!-- Importing Google Fonts for matching typography -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
     <link href="https://googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -13,8 +13,8 @@
         :root {
             --bg-color: #12100e;
             --wood-texture: radial-gradient(circle, #2a1f17 0%, #140d0a 100%);
-            --card-bg: #fff5f8; /* Soft pink-white background from your mockup */
-            --primary-purple: #7a1fa2; /* Vibrant signature purple */
+            --card-bg: #fff5f8;
+            --primary-purple: #7a1fa2;
             --text-dark: #2c252b;
             --text-muted: #8e7c8d;
         }
@@ -36,6 +36,7 @@
             align-items: center;
             overflow: hidden;
             perspective: 2000px;
+            position: relative;
         }
 
         /* Ambient Instruction Text */
@@ -48,7 +49,6 @@
             font-weight: 400;
             animation: pulse 2s infinite alternate;
             z-index: 100;
-            transition: opacity 0.5s ease;
         }
 
         @keyframes pulse {
@@ -56,7 +56,7 @@
             100% { opacity: 0.8; }
         }
 
-        /* 3D Book Container */
+        /* 3D Card Book Container */
         .book-container {
             position: relative;
             width: 450px; 
@@ -65,6 +65,7 @@
             transform-style: preserve-3d;
             transition: transform 0.8s cubic-bezier(0.2, 0.6, 0.2, 1);
             transform: translateX(0);
+            z-index: 10;
         }
 
         .book-container.open {
@@ -94,19 +95,17 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 45px;
             text-align: center;
         }
 
-        /* Front Page (Cover image) */
+        /* Front Page (The Sketch) */
         .front {
             z-index: 2;
-            padding: 0; /* Clear padding for full bleed image cover */
+            padding: 0;
             overflow: hidden;
-            background-color: #000;
+            border-radius: 0 16px 16px 0;
         }
 
-        /* Using your requested image as a full-bleed cover layout */
         .cover-photo {
             width: 100%;
             height: 100%;
@@ -121,7 +120,7 @@
             border-right: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        /* Inside Right Page (The Birthday message layout) */
+        /* Inside Right Page (The Message Area) */
         .base-page {
             position: absolute;
             width: 100%;
@@ -134,14 +133,32 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between; /* Spacing matching your mockup layout */
+            justify-content: space-between;
             color: var(--text-dark);
             box-shadow: 0 10px 40px rgba(0,0,0,0.35);
             border-radius: 0 16px 16px 0;
             background-image: linear-gradient(to right, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0) 8%);
         }
 
-        /* Typography Styles matching mockup */
+        /* --- New Fade-In Animation Setup --- */
+        .fade-item {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        /* Triggers transition once the open class is attached to the card */
+        .book-container.open .fade-item {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Staggered delay blocks for structural element builds */
+        .book-container.open .delay-1 { transition-delay: 0.4s; }
+        .book-container.open .delay-2 { transition-delay: 0.7s; }
+        .book-container.open .delay-3 { transition-delay: 1.0s; }
+
+        /* Typography Styles */
         .sub-header {
             font-size: 0.75rem;
             text-transform: uppercase;
@@ -198,31 +215,65 @@
         .book-container.open .page {
             transform: rotateY(-180deg);
         }
+
+        /* --- Accelerated Particle Animation Effects --- */
+        .particle-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 5;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            top: -20px;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg) translateX(0);
+                opacity: 1;
+            }
+            100% {
+                /* Increased lateral sway range to 150px for a dynamic float */
+                transform: translateY(105vh) rotate(360deg) translateX(150px);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
 
+    <!-- Container for falling elements -->
+    <div class="particle-container" id="particle-box"></div>
+
     <div class="instruction" id="instruction-text">Tap the card to open</div>
 
     <div class="book-container" id="card">
-        <!-- Flipping Cover Layer -->
+        <!-- Turning Layer -->
         <div class="page">
-            <!-- Front Cover displaying the specified photo -->
+            <!-- Front Cover (The sketch asset) -->
             <div class="page-side front">
                 <img src="snehal-photo.jpg" alt="For Snehal" class="cover-photo">
             </div>
-            <!-- Empty or clean matching interior left leaf -->
+            <!-- Clean interior left backing page -->
             <div class="page-side back"></div>
         </div>
 
-        <!-- Right Interior Page holding the final message layout -->
+        <!-- Static Right Inside Panel -->
         <div class="base-page">
-            <div>
+            <div class="fade-item delay-1">
                 <p class="sub-header">For the wonderful</p>
                 <h1 class="name-title">Snehal</h1>
             </div>
 
-            <div class="message-content">
+            <div class="message-content fade-item delay-2">
                 <p class="message-paragraph">
                     Happy Birthday! I hope you have a <span class="highlight-text">fantastic day</span> filled with joy.
                 </p>
@@ -234,7 +285,7 @@
                 </p>
             </div>
 
-            <div class="signature-block">
+            <div class="signature-block fade-item delay-3">
                 <p class="closing">With Love,</p>
                 <h2 class="signature-name">Pritesh</h2>
             </div>
@@ -244,7 +295,9 @@
     <script>
         const card = document.getElementById('card');
         const instruction = document.getElementById('instruction-text');
+        const particleBox = document.getElementById('particle-box');
 
+        // Toggle Open/Close states
         card.addEventListener('click', () => {
             card.classList.toggle('open');
             if (card.classList.contains('open')) {
@@ -253,6 +306,14 @@
                 instruction.textContent = "Tap the card to open";
             }
         });
-    </script>
-</body>
-</html>
+
+        // Generate animated flower petals and love elements
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            const items = ['🌸', '💖', '💕', '✨'];
+            particle.textContent = items[Math.floor(Math.random() * items.length)];
+            
+            const size = Math.random() * 15 + 12;
+            particle.style.fontSize = `${size}px`;
