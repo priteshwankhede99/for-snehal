@@ -132,7 +132,7 @@
             left: 0;
             background: var(--card-bg);
             padding: 50px 40px;
-            z-index: 1; /* Kept behind the closed page leaf */
+            z-index: 1; 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -217,23 +217,24 @@
             transform: rotateY(-180deg);
         }
 
-        /* Falling Particles */
+        /* Falling Particles Container Fixes */
         .particle-container {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
-            z-index: 5;
+            z-index: 1000; /* Moves particles above everything else */
             overflow: hidden;
         }
 
         .particle {
             position: absolute;
-            top: -20px;
+            top: -50px;
             pointer-events: none;
             animation: fall linear infinite;
+            user-select: none;
         }
 
         @keyframes fall {
@@ -242,7 +243,7 @@
                 opacity: 1;
             }
             100% {
-                transform: translateY(105vh) rotate(360deg) translateX(150px);
+                transform: translateY(110vh) rotate(360deg) translateX(150px);
                 opacity: 0;
             }
         }
@@ -250,6 +251,7 @@
 </head>
 <body>
 
+    <!-- Target overlay container for background animation generation -->
     <div class="particle-container" id="particle-box"></div>
 
     <div class="instruction" id="instruction-text">Tap the card to open</div>
@@ -263,7 +265,7 @@
             <div class="page-side back"></div>
         </div>
 
-        <!-- Inside Right Panel (Kept separate so it stays hidden under the cover) -->
+        <!-- Inside Right Panel -->
         <div class="base-page">
             <div class="fade-item delay-1">
                 <p class="sub-header">For the wonderful</p>
@@ -290,35 +292,29 @@
     </div>
 
     <script>
-        const card = document.getElementById('card');
-        const instruction = document.getElementById('instruction-text');
-        const particleBox = document.getElementById('particle-box');
+        // Use DOMContentLoaded to make sure the script runs safely after elements finish rendering
+        document.addEventListener('DOMContentLoaded', () => {
+            const card = document.getElementById('card');
+            const instruction = document.getElementById('instruction-text');
+            const particleBox = document.getElementById('particle-box');
 
-        card.addEventListener('click', () => {
-            card.classList.toggle('open');
-            if (card.classList.contains('open')) {
-                instruction.textContent = "Tap the card to close";
-            } else {
-                instruction.textContent = "Tap the card to open";
+            if (card && instruction) {
+                card.addEventListener('click', () => {
+                    card.classList.toggle('open');
+                    if (card.classList.contains('open')) {
+                        instruction.textContent = "Tap the card to close";
+                    } else {
+                        instruction.textContent = "Tap the card to open";
+                    }
+                });
             }
-        });
 
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            
-            const items = ['🌸', '💖', '💕', '✨'];
-            particle.textContent = items[Math.floor(Math.random() * items.length)];
-            
-            const size = Math.random() * 15 + 12;
-            particle.style.fontSize = `${size}px`;
-            particle.style.left = `${Math.random() * 100}vw`;
-            
-            const duration = Math.random() * 3 + 2; 
-            particle.style.animationDuration = `${duration}s`;
-            particle.style.opacity = Math.random() * 0.6 + 0.4;
-            
-            particleBox.appendChild(particle);
-
-            setTimeout(() => {
-                particle.remove();
+            function createParticle() {
+                if (!particleBox) return;
+                
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const items = ['🌸', '💖', '💕', '✨'];
+                particle.textContent = items[Math.floor(Math.random() * items.length)];
+                
