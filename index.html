@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+html<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -77,7 +77,7 @@
             background: var(--card-bg);
             border-radius: 4px 0 0 4px;
             border-right: 1px solid rgba(0,0,0,0.1);
-            z-index: 1;
+            z-index: 1; /* Kept lower so covers stack on top */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -89,7 +89,7 @@
             left: 50%;
             background: var(--card-bg);
             border-radius: 0 4px 4px 0;
-            z-index: 1;
+            z-index: 1; /* Kept lower so covers stack on top */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -100,13 +100,13 @@
         .left-flap {
             left: 0;
             transform-origin: right center;
-            z-index: 3;
+            z-index: 5; /* Higher stacking order so it hides inner pages first */
         }
 
         .right-flap {
             left: 50%;
             transform-origin: left center;
-            z-index: 3;
+            z-index: 5; /* Higher stacking order so it hides inner pages first */
         }
 
         /* Front/Back Faces of Flaps */
@@ -170,8 +170,6 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            background-image: radial-gradient(rgba(240, 200, 200, 0.12) 1px, transparent 0);
-            background-size: 24px 24px;
         }
 
         .right-base .letter-content {
@@ -180,8 +178,8 @@
 
         /* Dynamic Image Styling on Left Page */
         .snehal-photo {
-            max-width: 80%;
-            max-height: 75%;
+            max-width: 85%;
+            max-height: 80%;
             width: auto;
             height: auto;
             display: block;
@@ -229,10 +227,12 @@
         /* --- INTERACTION STATES (OPEN BOOK) --- */
         .book-container.open .left-flap {
             transform: rotateY(-180deg);
+            z-index: 1; /* Push beneath inner panels when turned open */
         }
 
         .book-container.open .right-flap {
             transform: rotateY(180deg);
+            z-index: 1; /* Push beneath inner panels when turned open */
         }
 
         /* Fade contents smoothly on open */
@@ -303,5 +303,3 @@
                                 <stop offset="60%" stop-color="#18153c"/>
                                 <stop offset="100%" stop-color="#2c224d"/>
                             </linearGradient>
-                            <radialGradient id="moon-glow" cx="50%" cy="50%" r="50%">
-                                <stop offset="0%" stop-color="#ffffff" stop-opaci
