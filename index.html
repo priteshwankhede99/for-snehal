@@ -84,6 +84,7 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.35);
             border-radius: 0 16px 16px 0;
             z-index: 5;
+            pointer-events: auto; /* FIXED: Ensures clicks hit the page engine */
         }
 
         .page-side {
@@ -113,6 +114,7 @@
             height: 100%;
             object-fit: cover;
             display: block;
+            pointer-events: none; /* FIXED: Stops image from blocking page clicks */
         }
 
         /* Inside Left Backing page setup with second picture */
@@ -130,6 +132,7 @@
             object-fit: cover;
             display: block;
             opacity: 0.95;
+            pointer-events: none;
         }
 
         /* Inside Right Message Panel Layout */
@@ -315,9 +318,3 @@
                 card.addEventListener('click', () => {
                     card.classList.toggle('open');
                     if (card.classList.contains('open')) {
-                        instruction.textContent = "Tap the card to close";
-                    } else {
-                        instruction.textContent = "Tap the card to open";
-                    }
-                });
-            }
