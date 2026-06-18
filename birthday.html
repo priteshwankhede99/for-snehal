@@ -1,0 +1,289 @@
+html<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>With Warmth, Pritesh</title>
+    <style>
+        :root {
+            --bg-color: #12100e;
+            --wood-texture: radial-gradient(circle, #2a1f17 0%, #140d0a 100%);
+            --card-bg: #fcfaf2;
+            --text-color: #2b2621;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-color);
+            background-image: var(--wood-texture);
+            font-family: 'Georgia', serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            perspective: 2000px;
+        }
+
+        /* Ambient Instruction Text */
+        .instruction {
+            color: #a4968a;
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            opacity: 0.7;
+            pointer-events: none;
+            font-weight: 300;
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            100% { opacity: 0.8; }
+        }
+
+        /* Container holding the 3D book system */
+        .book-container {
+            position: relative;
+            width: 900px;
+            height: 550px;
+            cursor: pointer;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            border-radius: 4px;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+        }
+
+        /* Absolute positioning helper for all book panels */
+        .page {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            top: 0;
+            transform-style: preserve-3d;
+            transition: transform 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Left Side Base (Inside Left) */
+        .left-base {
+            left: 0;
+            background: var(--card-bg);
+            border-radius: 4px 0 0 4px;
+            border-right: 1px solid rgba(0,0,0,0.1);
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset -20px 0 30px rgba(0,0,0,0.05);
+        }
+
+        /* Right Side Base (Inside Right) */
+        .right-base {
+            left: 50%;
+            background: var(--card-bg);
+            border-radius: 0 4px 4px 0;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 20px 0 30px rgba(0,0,0,0.05);
+        }
+
+        /* The Animated Moving Flaps */
+        .left-flap {
+            left: 0;
+            transform-origin: right center;
+            z-index: 3;
+        }
+
+        .right-flap {
+            left: 50%;
+            transform-origin: left center;
+            z-index: 3;
+        }
+
+        /* Front/Back Faces of Flaps */
+        .face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .back {
+            background: var(--card-bg);
+            transform: rotateY(180deg);
+        }
+
+        /* --- COVER STYLING (The Triptych Scenes) --- */
+        .scene-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            border: 8px solid var(--card-bg);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        .left-flap .front .scene-container {
+            border-radius: 4px 0 0 4px;
+        }
+
+        .right-flap .front .scene-container {
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Horizontal Split for Left Flap (Scene 1 & 2) */
+        .split-scene {
+            height: 50%;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 4px solid var(--card-bg);
+        }
+        .split-scene:last-child {
+            border-bottom: none;
+        }
+
+        /* SVGs styling to look watercolor-esque */
+        svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* --- INSIDE POETRY STYLING --- */
+        .letter-content {
+            padding: 50px 40px 50px 60px;
+            color: var(--text-color);
+            line-height: 1.8;
+            font-size: 1.15rem;
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-image: radial-gradient(rgba(240, 200, 200, 0.12) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+
+        .right-base .letter-content {
+            padding: 50px 60px 50px 40px;
+        }
+
+        .letter-content p {
+            margin-bottom: 24px;
+            font-style: italic;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .signature {
+            font-family: 'Brush Script MT', 'Great Vibes', cursive;
+            font-size: 2.4rem;
+            margin-top: 25px;
+            text-align: right;
+            color: #5c4d43;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* --- INTERACTION STATES (OPEN BOOK) --- */
+        .book-container.open .left-flap {
+            transform: rotateY(-180deg);
+        }
+
+        .book-container.open .right-flap {
+            transform: rotateY(180deg);
+        }
+
+        /* Fade typography smoothly on open */
+        .book-container.open .letter-content p,
+        .book-container.open .signature {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Staggered text presentation lines */
+        .book-container.open .left-base .letter-content p:nth-child(1) { transition-delay: 0.6s; }
+        .book-container.open .left-base .letter-content p:nth-child(2) { transition-delay: 1.1s; }
+        .book-container.open .right-base .letter-content p:nth-child(1) { transition-delay: 1.6s; }
+        .book-container.open .signature { transition-delay: 2.2s; }
+
+        /* --- PARTICLE CANVAS LAYER --- */
+        #petalCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="instruction" id="instructText">Tap the card to open</div>
+
+    <div class="book-container" id="book" onclick="toggleBook()">
+        
+        <!-- CANVAS FOR WATERCOLOR PETAL BURST EFFECT -->
+        <canvas id="petalCanvas"></canvas>
+
+        <!-- STATIC INSIDE LEFT PAGE -->
+        <div class="page left-base">
+            <div class="letter-content">
+                <p>Dear Snehal,</p>
+                <p>Like a dancer discovering her melody beneath a sudden moon, some beautiful moments rewrite the entire sky.</p>
+                <p>We spend our days painting quiet, ordinary landscapes, only to realize life is meant to hold much wilder, deeper colors.</p>
+            </div>
+        </div>
+
+        <!-- STATIC INSIDE RIGHT PAGE -->
+        <div class="page right-base">
+            <div class="letter-content" style="justify-content: flex-start; padding-top: 95px;">
+                <p>May this year bring you the quiet romance of falling cherry blossoms, the brilliant clarity of golden hour, and an endless array of cinematic scenes worth remembering.</p>
+                <div class="signature">With Warmth, Pritesh</div>
+            </div>
+        </div>
+
+        <!-- MOVING LEFT FLAP (Scene 1 & Scene 2 on Front) -->
+        <div class="page left-flap" id="leftFlap">
+            <div class="face front">
+                <!-- Scene 1: The Dancer -->
+                <div class="split-scene">
+                    <svg viewBox="0 0 450 275">
+                        <defs>
+                            <linearGradient id="sky-1" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#0b091a"/>
+                                <stop offset="60%" stop-color="#18153c"/>
+                                <stop offset="100%" stop-color="#2c224d"/>
+                            </linearGradient>
+                            <radialGradient id="moon-glow" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+                                <stop offset="30%" stop-color="#fff6e0" stop-opacity="0.8"/>
+                                <stop offset="100%" stop-color="#fff6e0" stop-opacity="0"/>
+                            </radialGradient>
+                        </defs>
+                        <!-- Sky Backdrop -->
+                        <rect width="450" height="275" fill="url(#sky-1)"/>
+                        <!-- Moon & Glow -->
+                        <circle cx="350" cy="70" r="50" fill="url(#moon-glow)"/>
+                        <circle cx="350" cy="70" r="22" fill="#fffcee"/>
+                        <!-- Stars Elements -->
+                        <circle cx="80" cy="50" r="1.5" fill="#fff" opacity="0.8"/>
+                        <circle cx="150" cy="90" r="2" fill="#fff" opacity="0.5"/>
+                        <circle cx="240" cy="40" r="1" fill="#fff" opacity="0.9"/>
+                        <!-- Whimsical Musical Line & Notes -->
+                        <path d="M 50 200 Q 150 120 280 180 T 420 110" fill="none" stroke="#ffda79" stroke-width="1" stroke-dasharray="4 4" opacity="0.4"/>
+                        <!-- Dancer Silhouette Asset -->
