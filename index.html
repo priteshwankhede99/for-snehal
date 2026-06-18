@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For The Wonderful Snehal</title>
-    <!-- Google Fonts -->
+    <!-- Google Fonts for custom script typography -->
     <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
     <link href="https://googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -56,7 +56,7 @@
             100% { opacity: 0.8; }
         }
 
-        /* 3D Card Book Container */
+        /* 3D Card Container */
         .book-container {
             position: relative;
             width: 450px; 
@@ -99,7 +99,7 @@
             text-align: center;
         }
 
-        /* Front Page Cover Fixes */
+        /* Front Cover setup with first picture */
         .front {
             z-index: 2;
             padding: 0 !important;
@@ -109,21 +109,30 @@
         }
 
         .cover-photo {
-            width: 100%;
+            width: 100%; 
             height: 100%;
             object-fit: cover;
             display: block;
         }
 
-        /* Inside Left Page Backing */
+        /* Inside Left Backing page setup with second picture */
         .back {
             transform: rotateY(180deg);
             background: #fff0f5; 
             border-radius: 16px 0 0 16px;
             border-right: 1px solid rgba(0, 0, 0, 0.05);
+            overflow: hidden;
         }
 
-        /* Inside Right Panel Hidden Layer Fixes */
+        .back-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            opacity: 0.95;
+        }
+
+        /* Inside Right Message Panel Layout */
         .base-page {
             position: absolute;
             width: 100%;
@@ -143,7 +152,7 @@
             background-image: linear-gradient(to right, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0) 8%);
         }
 
-        /* Staggered Text Animations */
+        /* Staggered Text Entrance Effects */
         .fade-item {
             opacity: 0;
             transform: translateY(15px);
@@ -217,7 +226,7 @@
             transform: rotateY(-180deg);
         }
 
-        /* Falling Particles Container Fixes */
+        /* Particle Overlay Layer */
         .particle-container {
             position: fixed;
             top: 0;
@@ -225,7 +234,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 1000; /* Moves particles above everything else */
+            z-index: 1000; 
             overflow: hidden;
         }
 
@@ -251,21 +260,25 @@
 </head>
 <body>
 
-    <!-- Target overlay container for background animation generation -->
+    <!-- Target div for falling cherry blossoms and hearts -->
     <div class="particle-container" id="particle-box"></div>
 
     <div class="instruction" id="instruction-text">Tap the card to open</div>
 
     <div class="book-container" id="card">
-        <!-- Flipping Cover Leaf -->
+        <!-- Flipping Page Layout Structure -->
         <div class="page">
+            <!-- Closed Cover (Picture 1) -->
             <div class="page-side front">
-                <img src="snehal-photo.jpg" alt="For Snehal" class="cover-photo">
+                <img src="1snehal-photo.jpg" alt="Opening Cover Photo" class="cover-photo">
             </div>
-            <div class="page-side back"></div>
+            <!-- Opened Left Leaf Inner Panel (Picture 2) -->
+            <div class="page-side back">
+                <img src="snehal-photo.jpg" alt="Inside Left Page Sketch" class="back-photo">
+            </div>
         </div>
 
-        <!-- Inside Right Panel -->
+        <!-- Inside Right Panel (Message Layer) -->
         <div class="base-page">
             <div class="fade-item delay-1">
                 <p class="sub-header">For the wonderful</p>
@@ -292,12 +305,12 @@
     </div>
 
     <script>
-        // Use DOMContentLoaded to make sure the script runs safely after elements finish rendering
         document.addEventListener('DOMContentLoaded', () => {
             const card = document.getElementById('card');
             const instruction = document.getElementById('instruction-text');
             const particleBox = document.getElementById('particle-box');
 
+            // Set up clicking logic toggles
             if (card && instruction) {
                 card.addEventListener('click', () => {
                     card.classList.toggle('open');
@@ -308,13 +321,3 @@
                     }
                 });
             }
-
-            function createParticle() {
-                if (!particleBox) return;
-                
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                
-                const items = ['🌸', '💖', '💕', '✨'];
-                particle.textContent = items[Math.floor(Math.random() * items.length)];
-                
